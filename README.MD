@@ -70,70 +70,6 @@
 
 ### Arquivos e pastas para o projeto exemplo
     src/
-        /controllers
-            user.ts
-                import { Response, Request } from "express";
-                import { database } from "./../database";
-
-                export class FindAllUserController{
-                    async handle(req: Request, res: Response) {
-                        const user = await database.user.findMany()
-                        return res.json(user)
-                    }
-                }
-
-                export class FindUserController{
-                    async handle(req: Request, res: Response) {
-                        const { id } = req.params;
-                        const user = await database.user.findUnique({
-                            where: {
-                                id: Number(id)
-                            }
-                        })
-                        return res.json(user)
-                    }
-                }
-
-                export class UpdateUserController{
-                    async handle(req: Request, res: Response) {
-                        const { name, email } = req.body;
-                        const { id } = req.params;
-                        const user = await database.user.update({
-                            where: {
-                                id: Number(id)
-                            },
-                            data: {
-                                name, email
-                            }
-                        })
-                        return res.json({user})
-                    }
-                }
-
-                export class CreateUserController{
-                    async handle(req: Request, res: Response) {
-                        const { name, email } = req.body;
-                        const user = await database.user.create({
-                            data:{
-                                name, email
-                            }
-                        })
-                        return res.json(user)
-                    }
-                }
-
-                export class DeleteUserController{
-                    async handle(req: Request, res: Response) {
-                        const { id } = req.params;
-                        const user = await database.user.delete({
-                            where: {
-                                id: Number(id)
-                            }
-                        })
-                        return res.json("User:: Deletado com sucesso")
-                    }
-                }
-    
         database.ts
             import { PrismaClient } from '@prisma/client'
 
@@ -143,7 +79,7 @@
 
             export { database }
 
-        routers.ts
+        routers.ts    /** ESSE ARQUIVO DEPENDE DO CONTROLLER */
             import { Router } from 'express'
             import { /** Todos Methodos User */
                     DeleteUserController, CreateUserController, 
@@ -160,7 +96,7 @@
             const deleteUser = new DeleteUserController
 
             /* ROTAS USUARIOS */
-            router.post('/users', createUser.handle)
+            router.post('/user', createUser.handle)
             router.get('/user', findAllUser.handle)
             router.get('/user/:id', findUser.handle)
             router.put('/user/:id', updateUser.handle)
@@ -168,7 +104,7 @@
 
             export { router }
 
-        server.ts
+        server.ts /** ESSE ARQUIVO DEPENDE DO routes.ts */
             import express from 'express'
             import { router } from './routes';
 
@@ -183,9 +119,76 @@
             app.listen(port, () => {
                 console.log('Server is running! ' + port)
         });
+
+        /controllers
+            user.ts
+            import { Response, Request } from "express";
+            import { database } from "./../database";
+
+            export class FindAllUserController{
+                async handle(req: Request, res: Response) {
+                    const user = await database.user.findMany()
+                    return res.json(user)
+                }
+            }
+
+            export class FindUserController{
+                async handle(req: Request, res: Response) {
+                    const { id } = req.params;
+                    const user = await database.user.findUnique({
+                        where: {
+                            id: Number(id)
+                        }
+                    })
+                    return res.json(user)
+                }
+            }
+
+            export class UpdateUserController{
+                async handle(req: Request, res: Response) {
+                    const { name, email } = req.body;
+                    const { id } = req.params;
+                    const user = await database.user.update({
+                        where: {
+                            id: Number(id)
+                        },
+                        data: {
+                            name, email
+                        }
+                    })
+                    return res.json({user})
+                }
+            }
+
+            export class CreateUserController{
+                async handle(req: Request, res: Response) {
+                    const { name, email } = req.body;
+                    const user = await database.user.create({
+                        data:{
+                            name, email
+                        }
+                    })
+                    return res.json(user)
+                }
+            }
+
+            export class DeleteUserController{
+                async handle(req: Request, res: Response) {
+                    const { id } = req.params;
+                    const user = await database.user.delete({
+                        where: {
+                            id: Number(id)
+                        }
+                    })
+                    return res.json("User:: Deletado com sucesso")
+                }
+            }
+    
+        
     
 ### Prisma Studio testes gráficos
     * npx prisma studio
     * npm run dev    ||  npm run start
+    * pode usar o insominia para testar URLs da api
 
 ### Fim
